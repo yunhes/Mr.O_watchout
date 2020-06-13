@@ -8,7 +8,7 @@ import urllib
 from datetime import datetime, timedelta
 import time
 
-appKey = '19bfb64d-9514-40fe-bc66-b9004fbae0b4'
+appKey = '22428c8e-0c7e-4b8d-a5db-7a8c74f423e5'
 station = 75            #Irvine
 
 class cimis_data:

@@ -1,11 +1,5 @@
 #!/usr/bin/env python3
-########################################################################
-# Filename    : DHT.py
-# Description : Use the DHT to get local humidity and temperature data
-#               Use this data to calculate irrigation time
-# Author      : Sienna Ballot
-# modification: 6/3/19
-########################################################################
+
 
 import threading
 import time
@@ -44,10 +38,10 @@ def getIrrigationTime():
     global localHumidity
     global localTemp
     global displaycimis
-    
+
     # get current date and time info
     result = time.localtime(time.time())
-    
+
     # get ET, humidity, and temp from CIMIS
     # check if CIMIS site has been update for first hour in list
     CIMIS.getcimisdata(localHourly[0][0], localHourly[0][1])#result.tm_hour, date)
@@ -72,14 +66,14 @@ def getIrrigationTime():
             # if list empty then break
             if (len(localHourly) == 0):
                 break
-            
+
             # get cimis data for the next hour in the list
             CIMIS.getHourData(localHourly[0][0], localHourly[0][1])
-            
+
             # if the cimis has not been updated for that hour then break
             if (cimisET == None):
                 break
-        
+
             # get derating factors for the hour in the list to derate ET0
             humidityDerate = cimisHumidity / localHourly[0][2]
             tempDerate = localHourly[0][3] / cimisTemp
@@ -99,7 +93,7 @@ def getIrrigationTime():
         galHour = ((currET * pf * sqft * conversion) / IE) / 24
         print("Gallons for only this hour: ", galHour)
 
-        # additional water is the total water needed minus the required water for that hour 
+        # additional water is the total water needed minus the required water for that hour
         additionalWater = gallons - galHour
         print("Additional Water: ", additionalWater)
 
@@ -108,7 +102,7 @@ def getIrrigationTime():
         print("Water Saved: ", waterSaved)
 
         # get time to run irrigation in minutes
-        # gallons needed / (gallons per min) = minutes needed to run 
+        # gallons needed / (gallons per min) = minutes needed to run
         irrigationTime = gallons / systemRate
         print("Irrigation Time (min): ", irrigationTime)
 
@@ -167,28 +161,28 @@ def loop():
             else:
                 localHumidity = (localHumidity + dht.humidity)/2
                 localTemp = (localTemp + (32+(1.8*dht.temperature)))/2
-        
+
         count += 1
         print("Local Humidity: ", localHumidity)
         print("Local Temperature: ", localTemp)
-        
+
         # check CIMIS for new data
         # if there is new data for the hour
         result = time.localtime(time.time())
         if (count >= 60 or result.tm_min == 59):
             # format month for date string
-            if (result.tm_mon/10 == 0):                 
+            if (result.tm_mon/10 == 0):
                 month = '0'+str(result.tm_mon)
             else:
                 month = str(result.tm_mon)
             # format day for date string
-            if (result.tm_mday/10 == 0):                
+            if (result.tm_mday/10 == 0):
                 day = '0'+str(result.tm_mday)
             else:
                 day = str(result.tm_mday)
             # formulate date string and send as argument to CIMIS function
             date = str(result.tm_year)+'-'+month+'-'+day
-            
+
             # make a list containing the date and local data for the current hour
             # and append this data to the localHourly list
             data = [result.tm_hour, date, localHumidity, localTemp]
@@ -200,10 +194,9 @@ def loop():
             localHumidity = 0
             localTemp = 0
             count = 0
-        
-        # sleep for 1 minute  
+
+        # sleep for 1 minute
         display = True #enable LCD to display
         time.sleep(60)
         display = False #disable LCD to display
         time.sleep(0.5)
-
