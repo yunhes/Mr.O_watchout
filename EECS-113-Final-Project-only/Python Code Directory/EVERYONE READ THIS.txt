@@ -1,0 +1,7 @@
+NOTES:
+
+Please use 4 spaces instead of tab spacing for indents!
+
+Adafruit and CIMIS Github Python Code directories will spit errors. That's because 
+    as far as I know, the libaries that those files depend on are not located in our
+    Visual Studio environments
